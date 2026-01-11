@@ -5,7 +5,7 @@ from .models import User, AdminProfile, JobseekerProfile, EmployerProfile
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("username", "email", "phone_number", "first_name", "last_name", "role", "is_active", "is_staff")
+    list_display = ("username", "email", "is_authenticate", "phone_number", "first_name", "last_name", "role", "is_active", "is_staff")
     list_filter = ("username", "phone_number", "is_active", "role", "gender")
     search_fields = ("username", "phone_number", "is_active", "role", "gender")
     ordering = ("username",)

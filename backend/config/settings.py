@@ -31,6 +31,10 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'users.User'
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend'
+    ]
+
 
 
 # Application definition
@@ -47,6 +51,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'users',
 ]
+
+# AUTHENTICATION_BACKENDS = ["users.backends.EmailBackend"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -70,11 +76,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',  # For registration endpoint
     ],
-}
+}   
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

@@ -20,15 +20,21 @@ class User(AbstractUser):
         ("female", "Female"),
         ("other", "Other"),
     ]
-
+    
+    email = models.EmailField(unique=True)
     phone_number = PhoneNumberField(region="PK", blank=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     profile_pic = models.ImageField(upload_to="profile_pics/", validators=[validate_file_extension], blank=True, null=True)
     role = models.CharField(max_length=50, choices=ROLE_CHOICES, default="jobseeker")
+    is_authenticate = False
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = [] 
 
     @property
     def full_name(self):

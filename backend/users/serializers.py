@@ -2,9 +2,24 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError as DjangoValidationError
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.utils import timezone
+from django.contrib.auth import authenticate
 from .models import User, AdminProfile, JobseekerProfile, EmployerProfile
 from .validators import validate_file_extension
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    username_field = 'email'  
+    def validate(self, attrs):
+        authenticate_kwargs = {
+            'username': attrs['email'],
+            'password': attrs['password']
+        }
+        user = authenticate(**authenticate_kwargs)
+        if not user:
+            raise serializers.ValidationError("Invalid email or password")
+        return super().validate(attrs)
 
 
 class UserSerializer(serializers.ModelSerializer):
