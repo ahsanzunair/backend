@@ -27,7 +27,6 @@ class User(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     profile_pic = models.ImageField(upload_to="profile_pics/", validators=[validate_file_extension], blank=True, null=True)
     role = models.CharField(max_length=50, choices=ROLE_CHOICES, default="jobseeker")
-    is_authenticate = False
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -2,8 +2,10 @@ from rest_framework import generics,  permissions, status
 from django.contrib.auth import logout
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
+from .renderers import UserRenderer
 from .models import User, AdminProfile, JobseekerProfile, EmployerProfile
 from .serializers import (
     UserRegistrationSerializer,
@@ -21,18 +23,33 @@ from .serializers import (
 # Create your views here.
 
 
+def get_tokens_for_user(user):
+    if not user.is_active:
+        raise AuthenticationFailed("User is not Active")
+    
+    refresh = RefreshToken.for_user(user)
+    
+    return{
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+    }
+
+
 class UserRegistrationView(generics.CreateAPIView):
+    renderer_classes = [UserRenderer]
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        token = get_tokens_for_user(user)
 
         return Response(
             {
+                "token": token,
                 "message": "User registered successfully",
                 "user": UserSerializer(user).data,
                 "redirect_to": "/auth/login"
@@ -42,7 +59,8 @@ class UserRegistrationView(generics.CreateAPIView):
 
 
 class LoginView(APIView):
-    permission_classes = []  
+    permission_classes = []
+    renderer_classes = [UserRenderer]  
     
     def post(self, request):
         email = request.data.get("email")
@@ -64,6 +82,7 @@ class LoginView(APIView):
         
         
         user = authenticate(request, email=email, password=password)
+        token = get_tokens_for_user(user)
         
         if not user:
             return Response(
@@ -78,8 +97,6 @@ class LoginView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        refresh = RefreshToken.for_user(user)
-
         # role based redirect
         if user.role == "admin":
             redirect_to = "/admin/dashboard"
@@ -89,9 +106,8 @@ class LoginView(APIView):
             redirect_to = "/jobs"
 
         return Response({
+            "token": token,
             "message": "Login successful",
-            "access": str(refresh.access_token),
-            "refresh": str(refresh),
             "redirect_to": redirect_to,
             "user": {
                 "id": user.id,

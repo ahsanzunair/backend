@@ -123,6 +123,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
+class UserLoginSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField()
+    class Meta:
+        model = User
+        fields = ["email", "password"]
+
+
 class AdminProfileSerializer(serializers.ModelSerializer):
     user_details = serializers.SerializerMethodField()
 
