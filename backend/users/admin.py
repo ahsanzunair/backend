@@ -5,13 +5,13 @@ from .models import User, AdminProfile, JobseekerProfile, EmployerProfile
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("id","username", "email", "phone_number", "full_name", "role", "is_active", "is_staff", "is_superuser")
+    list_display = ("id","username", "email", "phone_number", "full_name", "role", "slug", "is_active", "is_staff", "is_superuser")
     list_filter = ("is_active", "role", "gender")
     search_fields = ("username", "phone_number", "is_active", "role", "gender")
     ordering = ("created_at",)
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        ("Personal Info", {"fields": ("first_name", "last_name", "email", "phone_number", "gender", "date_of_birth", "profile_pic")}),
+        ("Personal Info", {"fields": ("first_name", "last_name", "slug", "email", "phone_number", "gender", "date_of_birth", "profile_pic")}),
         ("Permissions", {"fields": ("role", "is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
         ("Important dates", {"fields": ("last_login", "date_joined")}),
     )

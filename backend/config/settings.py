@@ -46,13 +46,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_browser_reload',
+    'rest_framework_simplejwt.token_blacklist',
     'rest_framework',
     'corsheaders',
+    'categories',
     'users',
+    'jobs',
 ]
 
-# AUTHENTICATION_BACKENDS = ["users.backends.EmailBackend"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -153,7 +154,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+
+TIME_ZONE = 'Asia/Karachi'
+# USE_TZ = True
+
 
 USE_I18N = True
 
@@ -168,3 +173,10 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+
+SIMPLE_JWT = {
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ROTATE_REFRESH_TOKENS': True,
+}
