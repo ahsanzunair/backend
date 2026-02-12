@@ -54,7 +54,6 @@ class JobViewSet(viewsets.ModelViewSet):
         
         # Handle different actions
         if self.action == "employer":
-            # For employer view, show all jobs (including inactive)
             queryset = Job.objects.all()
             
             # Filter by company if provided

@@ -5,7 +5,7 @@ from .models import Job
 
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "company", "slug", "location", "views", "applicants", "is_active")
+    list_display = ("id", "title", "company", "logo", "slug", "location", "views", "applicants", "is_active")
     search_fields = ("title", "company")
     list_filter = ("location",)
     ordering = ("posted_date",)

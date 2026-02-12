@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from users.models import User
 
 # Create your models here.
 
@@ -9,15 +10,22 @@ class Job(models.Model):
         ("full_time", "Full_Time"),
         ("part_time", "Part_Time"),
         ("internship", "Internship"),
+        ("freelance", "Freelance"),
         ("contract", "Contract"),
+        ("permanent", "Permanent"),
+        ("temporary", "Temporary"),
     ]
     
     EXPERIENCE_LEVELS = [
         ("fresher", "Fresher"),
+        ("entry_level", "Entry_level"),
         ("junior", "Junior"),
         ("mid", "Mid"),
         ("senior", "Senior"),
         ("lead", "Lead"),
+        ("manager", "Manager"),
+        ("director", "Director"),
+        ("executive", "Executive"),
     ]
     
     JOB_TYPES = [
@@ -26,9 +34,16 @@ class Job(models.Model):
         ("hybrid", "Hybrid"),
     ]
     
+    STATUS_CHOICES = [
+        ("draft", "Draft"),
+        ("published", "Published"),
+    ]
+    
+    employer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="jobs", default=1)
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     description = models.TextField()
+    logo = models.ImageField(blank=True, null=True)
     company = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     employement_type = models.CharField(max_length=25, choices=EMPLOYMENT_TYPES, default="full_time")
@@ -43,7 +58,7 @@ class Job(models.Model):
     job_type = models.CharField(max_length=20, choices=JOB_TYPES)
     requirements = models.JSONField(default=list, blank=True)
     benefits = models.JSONField(default=list, blank=True)
-    status = models.CharField(max_length=25)
+    status = models.CharField(max_length=25, choices=STATUS_CHOICES, default="draft")
     is_active = models.BooleanField(default=True)
     
     def __str__(self):
@@ -53,3 +68,13 @@ class Job(models.Model):
         if not self.slug:
             self.slug = slugify(f"{self.title}-{self.company}")
         super().save(*args, **kwargs)
+
+
+
+class SavedJob(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ("user", "job")
